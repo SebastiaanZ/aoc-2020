@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pytz = "*"
+requests = "*"
+
+[dev-packages]
+flake8 = "*"
+flake8-annotations = "*"
+flake8-bugbear = "*"
+flake8-docstrings = "*"
+flake8-import-order = "*"
+flake8-string-format = "*"
+flake8-tidy-imports = "*"
+flake8-todo = "*"
+pep8-naming = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+lint = "pre-commit run --all-files"
+precommit = "pre-commit install"
