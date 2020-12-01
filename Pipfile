@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pytz = "*"
 requests = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 flake8 = "*"

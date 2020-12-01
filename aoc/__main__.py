@@ -31,6 +31,13 @@ parser.add_argument(
     dest="init_only"
 )
 parser.add_argument("--time", action='store_true', help="profile the running time using `timeit`")
+parser.add_argument("--submit", action='store_true', help="submit the latest submission")
+parser.add_argument(
+    "--ignore-cache",
+    action='store_true',
+    help="submit the latest submission",
+    dest="ignore_cache",
+)
 
 
 if __name__ == "__main__":
@@ -47,4 +54,4 @@ if __name__ == "__main__":
         log.info("starting timed run")
         args.puzzle.time()
     else:
-        args.puzzle.run()
+        args.puzzle.run(submit=args.submit, ignore_cache=args.ignore_cache)
