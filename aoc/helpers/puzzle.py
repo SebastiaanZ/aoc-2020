@@ -9,6 +9,7 @@ import pathlib
 import re
 import time
 import timeit
+import typing
 import webbrowser
 
 import pytz
@@ -154,6 +155,7 @@ class Puzzle:
         self.solution_path = self.solution_directory / "solution.py"
         self.solution_import = f'aoc.solutions.day{self.day:0>2}'
         self.answer_cache = AnswerCache(self.solution_directory)
+        self._helper_cache = {}
 
     @classmethod
     def from_path(cls, path: str) -> Puzzle:
@@ -166,6 +168,14 @@ class Puzzle:
         """Return the official representation of this puzzle."""
         cls_name = type(self).__name__
         return f"<{cls_name} day={self.day}>"
+
+    def __getitem__(self, key) -> typing.Any:
+        """Get an item from the helper cache."""
+        return self._helper_cache[key]
+
+    def __setitem__(self, key: typing.Hashable, value: typing.Any) -> None:
+        """Get an item from the helper cache."""
+        self._helper_cache[key] = value
 
     @property
     def lines(self) -> list[str]:
