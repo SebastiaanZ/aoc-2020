@@ -217,7 +217,7 @@ class Puzzle:
 
             with AnswerCache(self.solution_directory) as cache:
                 cache.set(*cache_path, "answer_one", value=answer_one)
-                cache.set(*cache_path, "answer_two", value=answer_one)
+                cache.set(*cache_path, "answer_two", value=answer_two)
         else:
             log.info("no changes detected, fetching answers from cache")
             answer_one = cached_answers.get("answer_one")
@@ -225,7 +225,9 @@ class Puzzle:
             run_time = 0.0
 
         if submit:
-            self.submit(answer_one, answer_two)
+            part, answer = ("1", answer_one) if answer_two is None else ("2", answer_two)
+            log.info(f"Submitting `{answer}` as the answer of day {self.day} - part {part}.")
+            self.submit(part, answer)
 
         with AnswerCache(self.solution_directory) as cache:
             answer_one_status = cache.get(
@@ -273,7 +275,7 @@ class Puzzle:
         print(separator)
         print(f"Combined avg runtime: {combined_runtime:.6f}s")
 
-    def submit(self, answer_one: CacheValue, answer_two: CacheValue) -> None:
+    def submit(self, part, answer: CacheValue) -> None:
         """
         Submit the answer to the Advent of Code website.
 
@@ -283,10 +285,8 @@ class Puzzle:
         To avoid duplicate submissions, the result for each unique answer is
         cached in the solution directory.
         """
-        if answer_one is answer_one is None:
-            raise ValueError("can't submit answer if the answer to both parts is `None`.")
-
-        part, answer = ("1", answer_one) if answer_two is None else ("2", answer_two)
+        if answer is None:
+            raise ValueError("Can't submit `None` as an answer!")
 
         with AnswerCache(self.solution_directory) as cache:
             cached_result = cache.get("cached_submissions", part, answer)
@@ -340,10 +340,12 @@ class Puzzle:
                 break
             elif body_text.startswith("You don't seem to be solving the right level."):
                 log.info(
-                    "got response that suggests that you've already completed this level; "
-                    f"assuming part {part} of day {self.day} is solved."
+                    "got a response that indicates that you've either already solved the level "
+                    "or are trying to submit an answer for a part you've not unlocked yet. "
+                    "See browser."
                 )
-                result = "correct"
+                webbrowser.open(r.url)
+                result = "failed"
                 break
             else:
                 result = "failed"
