@@ -22,6 +22,13 @@ day_group.add_argument(
     dest="puzzle",
     help="select a puzzle by solution path"
 )
+day_group.add_argument(
+    "--date",
+    action="store_const",
+    const=Puzzle.from_date(),
+    dest="puzzle",
+    help="select a puzzle by the current date (only work during the event)"
+)
 
 parser.add_argument('--debug', action='store_true', help='set logging level to DEBUG')
 parser.add_argument(

@@ -164,6 +164,15 @@ class Puzzle:
         day = path.parent.stem
         return cls(day)
 
+    @classmethod
+    def from_date(cls) -> Puzzle:
+        """Create a Puzzle instance from a solution path."""
+        today = datetime.datetime.now(pytz.timezone("EST"))
+        if today.month != 12 or today.day > 25:
+            raise ValueError("You can only use this classmethod during the event!")
+
+        return cls(str(today.day))
+
     def __repr__(self) -> str:
         """Return the official representation of this puzzle."""
         cls_name = type(self).__name__
