@@ -1,3 +1,4 @@
+import itertools
 import logging
 import typing
 
@@ -7,46 +8,30 @@ __all__ = ["part_one", "part_two"]
 log = logging.getLogger(__name__)
 
 
-def part_one(puzzle_input: Puzzle) -> typing.Optional[typing.Union[str, int]]:
+def part_one(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
     """
     Return the solution for part one of this day.
 
-    This solution sorts the list of integers that we get as input and then
-    iterates of that sorted list using two (nested) for-loops. As the lists
-    are sorted, we know that we can break the inner-loop as we go over 2020
-    as an intermediate result.
-
-    An alternative approach would be to use a (sorted?) set instead.
+    This solution uses a set to quickly look up if the complement we need
+    to add to 2020 is present in the current list of numbers. Assuming that
+    we're dealing with a set without critical hash collisions, this brings
+    the solution down to an O(N) complexity.
     """
-    puzzle_input.sorted = sorted(puzzle_input.intlines)
+    puzzle["set"] = set(puzzle.intlines)
 
-    for i, number_one in enumerate(puzzle_input.sorted[:-1]):
-        for number_two in puzzle_input.sorted[i+1:]:
-            if number_one + number_two > 2020:
-                break
-
-            if number_one + number_two == 2020:
-                return number_one * number_two
+    for number_one in puzzle["set"]:
+        if (2020 - number_one) in puzzle["set"]:
+            return (2020 - number_one) * number_one
 
 
-def part_two(puzzle_input: Puzzle) -> typing.Optional[typing.Union[str, int]]:
+def part_two(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
     """
     Return the solution for part two of this day.
 
-    This approach is similar to part one, except that we're now dealing with
-    three loops. To break early, an additional check was added to the first
-    inner loop that breaks it off when the initial third number would already
-    take it over the total.
+    This approach is similar to `part_one`: It looks at all combinations of
+    numbers, at a complexity cost of O(N^2), and determines whether or not
+    the third number required to sum to 2020 is present in the set.
     """
-    for i, number_one in enumerate(puzzle_input.sorted[:-2]):
-        for j, number_two in enumerate(puzzle_input.sorted[i+1:-1], start=i+1):
-            if number_one + number_two + puzzle_input.sorted[j+1] > 2020:
-                break
-
-            for number_three in puzzle_input.sorted[j+1:]:
-                number_sum = number_one + number_two + number_three
-                if number_sum > 2020:
-                    break
-
-                if number_sum == 2020:
-                    return number_one * number_two * number_three
+    for number_one, number_two in itertools.combinations(puzzle["set"], 2):
+        if (2020 - number_one - number_two) in puzzle["set"]:
+            return (2020 - number_one - number_two) * number_one * number_two
