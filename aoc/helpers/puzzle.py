@@ -41,11 +41,11 @@ __all__ = ["part_one", "part_two"]
 log = logging.getLogger(__name__)
 
 
-def part_one(puzzle_input: Puzzle) -> typing.Optional[typing.Union[str, int]]:
+def part_one(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
     """Return the solution for part one of this day."""
 
 
-def part_two(puzzle_input: Puzzle) -> typing.Optional[typing.Union[str, int]]:
+def part_two(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
     """Return the solution for part two of this day."""
 '''.lstrip()
 
