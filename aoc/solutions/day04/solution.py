@@ -52,7 +52,7 @@ def validate_eye_color(eye_color: str) -> bool:
 
 def validate_passport_number(passport_number: str) -> bool:
     """Validate a passport number."""
-    return len(passport_number) == 9 and (c in string.digits for c in passport_number)
+    return len(passport_number) == 9 and all(c in string.digits for c in passport_number)
 
 
 VALIDATED_FIELDS = {
