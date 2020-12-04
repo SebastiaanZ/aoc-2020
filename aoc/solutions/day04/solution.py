@@ -5,7 +5,6 @@ import functools
 import logging
 import string
 import typing
-import re
 
 from aoc.helpers import Puzzle
 
@@ -13,7 +12,7 @@ __all__ = ["part_one", "part_two"]
 log = logging.getLogger(__name__)
 
 
-P_HAIR_COLOR = re.compile(r"#[a-f\d]{6}")
+HEXDIGITS = string.hexdigits.removesuffix("ABCDEF")
 
 
 def validate_year(year: str, low: str, high: str) -> bool:
@@ -42,7 +41,7 @@ def validate_height(height: str) -> bool:
 
 def validate_hair_color(hair_color: str) -> bool:
     """Validate a hair color code."""
-    return bool(P_HAIR_COLOR.fullmatch(hair_color))
+    return hair_color.startswith("#") and all(c in HEXDIGITS for c in hair_color[1:])
 
 
 def validate_eye_color(eye_color: str) -> bool:
