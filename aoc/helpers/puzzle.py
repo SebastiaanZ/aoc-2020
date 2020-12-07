@@ -229,7 +229,15 @@ class Puzzle:
 
         if ignore_cache or not cached_answers:
             solution = importlib.import_module(self.solution_import)
+
+            # Get puzzle preparation function
+            prepare_function = getattr(solution, "prepare_puzzle", None)
+            print(prepare_function)
+
             start = timeit.default_timer()
+            if prepare_function:
+                print("Running prepare function!")
+                prepare_function(self)
             answer_one = solution.part_one(self)
             answer_two = solution.part_two(self)
             run_time = timeit.default_timer() - start
@@ -273,9 +281,12 @@ class Puzzle:
     def time(self) -> None:
         """Time the solution for this puzzle."""
         solution = importlib.import_module(self.solution_import)
+        prepare_function = getattr(solution, "prepare_puzzle", None)
 
         results = []
-        for _part in (solution.part_one, solution.part_two):
+        for _part in (prepare_function, solution.part_one, solution.part_two):
+            if _part is None:
+                results.append(None)
             timer = timeit.Timer("_part(self)", globals=locals())
             result = timer.autorange()
             results.append(result)
@@ -287,10 +298,16 @@ class Puzzle:
         print(title)
         print(separator)
         combined_runtime = 0
-        for i, (runs, run_time) in enumerate(results, start=1):
+        if results[0] is not None:
+            runs, run_time = results[0]
+            avg_runtime = run_time / runs
+            print(f"Data parsing: {avg_runtime:.6f}s avg in {runs} runs")
+            combined_runtime += avg_runtime
+
+        for i, (runs, run_time) in enumerate(results[1:], start=1):
             avg_runtime = run_time/runs
             combined_runtime += avg_runtime
-            print(f"Part {i}: {avg_runtime:.6f}s avg in {runs} runs")
+            print(f"Part {i}:       {avg_runtime:.6f}s avg in {runs} runs")
         print(separator)
         print(f"Combined avg runtime: {combined_runtime:.6f}s")
 
@@ -324,6 +341,7 @@ class Puzzle:
         cookies = {"session": session}
 
         result = None
+        body_text = "[no response]"
         for retry in range(1, 3):
             log.info(f"Trying to submit answer (attempt {retry}/2)")
             r = requests.post(
@@ -354,7 +372,7 @@ class Puzzle:
                     time.sleep(waiting_time)
                 else:
                     log.info("out of retries, aborting answer submission")
-            elif body_text.startswith("That's not the right answer."):
+            elif body_text.startswith("That's not the right answer"):
                 result = "wrong"
                 break
             elif body_text.startswith("You don't seem to be solving the right level."):
@@ -377,6 +395,9 @@ class Puzzle:
 
         print(f"Submitted `{answer}` as the answer of day {self.day}, part {part}.")
         print(f"The answer is {result}")
+
+        if answer == "wrong":
+            print(f"Response: {body_text}")
 
         with AnswerCache(self.solution_directory) as cache:
             cache.set("cached_submissions", part, str(answer), value=result)
