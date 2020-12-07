@@ -178,7 +178,7 @@ class Puzzle:
         cls_name = type(self).__name__
         return f"<{cls_name} day={self.day}>"
 
-    def __getitem__(self, key) -> typing.Any:
+    def __getitem__(self, key: typing.Hashable) -> typing.Any:
         """Get an item from the helper cache."""
         return self._helper_cache[key]
 
@@ -311,7 +311,7 @@ class Puzzle:
         print(separator)
         print(f"Combined avg runtime: {combined_runtime:.6f}s")
 
-    def submit(self, part, answer: CacheValue) -> None:
+    def submit(self, part: str, answer: CacheValue) -> None:
         """
         Submit the answer to the Advent of Code website.
 

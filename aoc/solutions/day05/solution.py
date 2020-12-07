@@ -25,6 +25,7 @@ def bin_to_int(bin_string: str, *, zero: str = "0", one: str = "1") -> int:
 @dataclasses.dataclass
 class BoardingPass:
     """A dataclass to represent a boarding pass."""
+
     min_seat_id: typing.ClassVar[float] = float('inf')
     max_seat_id: typing.ClassVar[float] = float('-inf')
     seat_ids: typing.ClassVar[set] = set()

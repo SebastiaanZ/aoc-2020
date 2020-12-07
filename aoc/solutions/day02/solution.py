@@ -1,8 +1,9 @@
 import logging
-import typing
 import re
+import typing
 
 from aoc.helpers import Puzzle
+
 
 __all__ = ["part_one", "part_two"]
 log = logging.getLogger(__name__)

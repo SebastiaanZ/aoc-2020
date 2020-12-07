@@ -8,6 +8,7 @@ import typing
 
 from aoc.helpers import Puzzle
 
+
 __all__ = ["part_one", "part_two", "prepare_puzzle"]
 log = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ class BagCollection(collections.UserDict):
 
 @dataclasses.dataclass
 class Bag:
-    """"A type of bag."""
+    """A type of bag."""
 
     name: str
     children: typing.Dict[Bag, int] = dataclasses.field(default_factory=dict, repr=False)
