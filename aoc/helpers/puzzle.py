@@ -232,7 +232,6 @@ class Puzzle:
 
             # Get puzzle preparation function
             prepare_function = getattr(solution, "prepare_puzzle", None)
-            print(prepare_function)
 
             start = timeit.default_timer()
             if prepare_function:
@@ -287,6 +286,7 @@ class Puzzle:
         for _part in (prepare_function, solution.part_one, solution.part_two):
             if _part is None:
                 results.append(None)
+                continue
             timer = timeit.Timer("_part(self)", globals=locals())
             result = timer.autorange()
             results.append(result)
