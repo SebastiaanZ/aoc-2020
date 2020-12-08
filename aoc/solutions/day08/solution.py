@@ -112,12 +112,12 @@ def debugger(application: ConsoleApplication) -> int:
     It returns the final value after the application has halted successfully.
     """
     # 1. For each instruction location, determine which instructions end up there.
-    instruction_locations = collections.defaultdict(list)
+    instruction_destinations = collections.defaultdict(list)
     for i, (instruction, value) in reversed(application.instructions.items()):
         if instruction == "jmp":
-            instruction_locations[i + value].append(i)
+            instruction_destinations[i + value].append(i)
         else:
-            instruction_locations[i + 1].append(i)
+            instruction_destinations[i + 1].append(i)
 
     # 2. Use the target locations of instructions to determine which
     # instructions already lead naturally to the halting position.
@@ -126,7 +126,7 @@ def debugger(application: ConsoleApplication) -> int:
     while True:
         new_targets = set()
         for target in targets_to_check:
-            new_targets.update(instruction_locations[target])
+            new_targets.update(instruction_destinations[target])
         if not new_targets:
             # No other instructions end up at an identified target instruction.
             break
@@ -136,15 +136,15 @@ def debugger(application: ConsoleApplication) -> int:
 
     # 3. Run the application, checking for each `jmp` or `nop` instruction if
     # flipping it would result in the application hitting a target instruction.
-    changed = False
+    debugged = False
     while application.pointer != len(application.instructions):
         operation, argument = application.instructions[application.pointer]
-        if not changed and operation == "jmp" and application.pointer + 1 in targets:
+        if not debugged and operation == "jmp" and application.pointer + 1 in targets:
             application.pointer += 1
-            changed = True
-        elif not changed and operation == "nop" and application.pointer + argument in targets:
+            debugged = True
+        elif not debugged and operation == "nop" and application.pointer + argument in targets:
             application.pointer += argument
-            changed = True
+            debugged = True
         else:
             getattr(application, operation)(argument)
 
