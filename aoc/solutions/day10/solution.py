@@ -18,7 +18,7 @@ def part_one(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
 
 def part_two(puzzle: Puzzle) -> typing.Optional[typing.Union[str, int]]:
     """Return the number of possible combinations of adapters I could use."""
-    connections = {puzzle["adapters"][-1]: 1}
-    for adapter in reversed(puzzle["adapters"][:-1]):
-        connections[adapter] = sum(connections.get(adapter+i, 0) for i in range(1, 4))
-    return connections[0]
+    connections = {puzzle["adapters"][0]: 1}
+    for adapter in puzzle["adapters"][1:]:
+        connections[adapter] = sum(connections.get(adapter-i, 0) for i in range(1, 4))
+    return connections.popitem()[1]
