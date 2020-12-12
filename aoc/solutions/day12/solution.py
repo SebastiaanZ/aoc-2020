@@ -28,6 +28,11 @@ class Rotation(enum.Enum):
     LEFT = complex(0, 1)
     RIGHT = complex(0, -1)
 
+    def by_degrees(self, degrees: int) -> complex:
+        """Calculate the total rotation factor based on the specified degrees."""
+        rotation_factor = degrees // 90
+        return self.value ** rotation_factor
+
 
 @dataclasses.dataclass
 class Ferry:
@@ -69,11 +74,10 @@ class Ferry:
         currently operating without a waypoint, the ferry itself will be
         rotated.
         """
-        rotational_exponent = (degrees // 90)
         if self.waypoint is None:
-            self.heading *= rotation.value ** rotational_exponent
+            self.heading *= rotation.by_degrees(degrees)
         else:
-            self.waypoint *= rotation.value ** rotational_exponent
+            self.waypoint *= rotation.by_degrees(degrees)
 
     def forward(self, distance: int) -> None:
         """Move the ferry forward using the current heading or waypoint location."""
